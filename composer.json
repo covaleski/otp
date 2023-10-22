@@ -15,11 +15,11 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {
-        "covaleski/data-encoding": "dev-main"
-    },
     "require-dev": {
         "phpunit/phpunit": "^10",
         "chillerlan/php-qrcode": "^4.3"
+    },
+    "require": {
+        "covaleski/data-encoding": "^1.0"
     }
 }

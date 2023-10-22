@@ -4,26 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d6ec0c71b1ab58211503b9a91f7d90f",
+    "content-hash": "dddfd2f4de743104426279b5a4289ffd",
     "packages": [
         {
             "name": "covaleski/data-encoding",
-            "version": "dev-main",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/covaleski/data-encoding.git",
-                "reference": "ba58684b2c5260b80908eb3221c5ee50c2855ac9"
+                "reference": "bdccd31309f858081a4c211cafaf59e159cd38f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/covaleski/data-encoding/zipball/ba58684b2c5260b80908eb3221c5ee50c2855ac9",
-                "reference": "ba58684b2c5260b80908eb3221c5ee50c2855ac9",
+                "url": "https://api.github.com/repos/covaleski/data-encoding/zipball/bdccd31309f858081a4c211cafaf59e159cd38f2",
+                "reference": "bdccd31309f858081a4c211cafaf59e159cd38f2",
                 "shasum": ""
             },
             "require-dev": {
                 "phpunit/phpunit": "^10"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -40,12 +39,12 @@
                     "email": "covaleski23@gmail.com"
                 }
             ],
-            "description": "Flexible data encoding and decoding.",
+            "description": "Data encoding and decoding.",
             "support": {
                 "issues": "https://github.com/covaleski/data-encoding/issues",
-                "source": "https://github.com/covaleski/data-encoding/tree/main"
+                "source": "https://github.com/covaleski/data-encoding/tree/v1.0.0"
             },
-            "time": "2023-10-22T12:40:11+00:00"
+            "time": "2023-10-22T23:04:26+00:00"
         }
     ],
     "packages-dev": [
@@ -1807,12 +1806,10 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "covaleski/data-encoding": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }
