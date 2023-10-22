@@ -16,13 +16,19 @@ composer require covaleski/otp
 
 All extensions of the `Hotp` class have a `getPassword()` method, which provides the current password based on the generated counter, and a `getUri()` method, which returns a integration URI for authenticator apps.
 
-**Note on QR codes:** the content of authenticator QR codes is just the OTP URI. You can emit those by passing the value of `getPassword()` to a QR code generator of your choice. I'd recommend finding a JavaScript library and letting the browser create it so you spare your server and make your application back-end faster. If you wish to do this job server-side, take a look at [3 Testing](#3-testing). **DO NOT** use external libraries such as Google Charts to generate your QR code! Your URI contains your user's OTP secret and it's a big security gap to send it as a GET variable or rellying in third-party websites to handle it.
+### 2.1 Note on QR codes
 
-### 2.1 TOTP and authenticator apps
+The content of authenticator QR codes is just the OTP URI. You can emit those by passing the value of `getPassword()` to a QR code generator of your choice.
+
+I'd recommend finding a JavaScript library and letting the browser create it so you spare your server and make your application back-end faster. If you wish to do this job server-side, take a look at [3 Testing](#3-testing).
+
+**DO NOT** use external libraries such as Google Charts to generate your QR code! Your URI contains your user's OTP secret and it's a big security gap to send it as a GET variable or rellying in third-party websites to handle it.
+
+### 2.2 TOTP and authenticator apps
 
 The `Totp` class provides an instant way to integrate and verify passwords with authenticator apps.
 
-#### Instanciating
+#### 2.2.1 Instanciating
 
 You must provide the following parameters when instanciating the `Totp` class:
 
@@ -49,7 +55,7 @@ $totp
     ->setStep(45);
 ```
 
-#### Verifying a password
+#### 2.2.2 Verifying a password
 
 Any sent password can be easily checked using `getPassword()`.
 
@@ -64,7 +70,7 @@ if ($auth_code !== $totp->getPassword()) {
 }
 ```
 
-#### Getting the URI.
+#### 2.2.3 Getting the URI.
 
 Use `getUri()` to get the OTP URI - it is used to generate the QR codes.
 
@@ -73,7 +79,7 @@ Use `getUri()` to get the OTP URI - it is used to generate the QR codes.
 $uri = $totp->getUri();
 ```
 
-### 2.2 HOTP and custom counters
+### 2.3 HOTP and custom counters
 
 If you have a specific counter system you wish to implement between your application and authenticator apps, just extend the `Hotp` class and provide two methods:
 
