@@ -70,17 +70,21 @@ abstract class Hotp
      */
     protected function createUri(
         string $type,
-        string $label,
         array $params,
     ): string
     {
-        // @todo
+        // Format type and label.
+        $type = rawurlencode($type);
         $label = rawurlencode($this->label);
 
-        // Create template URI.
-        $template = 'otpauth://%s/%s?%s';
+        // Format params.
+        $query = [];
+        foreach ($params as $key => $value) {
+            $query[] = $key .'='. rawurlencode($value);
+        }
+        $query = implode('&', $query);
 
-        return sprintf($template, $type, $label, $params);
+        return sprintf('otpauth://%s/%s?%s', $type, $label, $query);
     }
 
     /**

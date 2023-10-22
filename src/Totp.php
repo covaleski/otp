@@ -47,20 +47,18 @@ class Totp extends Hotp
      */
     public function getUri(): string
     {
-        // Set URI template.
-        $uri = 'otpauth://totp/%s?secret=%s&issuer=%s';
-
         // Encode the secret as base32.
         $secret = Base32::encode($this->secret);
         $secret = str_replace('=', '', $secret);
 
-        // Encode data for URI usage.
-        $label = rawurlencode($this->label);
-        $secret = rawurlencode($secret);
-        $issuer = rawurlencode($this->issuer);
-
         // Build URI.
-        return sprintf($uri, $label, $secret, $issuer);
+        return $this->createUri('totp', [
+            'secret' => $secret,
+            'issuer' => $this->issuer,
+            'algorithm' => 'SHA1',
+            'digits' => $this->digits,
+            'period' => $this->step,
+        ]);
     }
 
     /**
