@@ -1,6 +1,6 @@
 {
     "name": "covaleski/otp",
-    "description": "One-time password integration.",
+    "description": "One-time password generation.",
     "type": "library",
     "license": "MIT",
     "autoload": {
