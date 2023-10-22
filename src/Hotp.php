@@ -12,16 +12,16 @@ namespace Covaleski\Otp;
 abstract class Hotp
 {
     /**
-     * Get the current counter value.
-     */
-    abstract protected function getCounter(): string;
-
-    /**
      * Get the integration URI.
      * 
      * Necessary to create QR codes.
      */
-    abstract protected function getUri(): string;
+    abstract public function getUri(): string;
+
+    /**
+     * Get the current counter value.
+     */
+    abstract protected function getCounter(): string;
 
     /**
      * Stored secret.
@@ -63,6 +63,24 @@ abstract class Hotp
         $digits = $this->computeDigits($string);
 
         return $digits;
+    }
+
+    /**
+     * Create a OPT authentication URI with a type, a label and parameters.
+     */
+    protected function createUri(
+        string $type,
+        string $label,
+        array $params,
+    ): string
+    {
+        // @todo
+        $label = rawurlencode($this->label);
+
+        // Create template URI.
+        $template = 'otpauth://%s/%s?%s';
+
+        return sprintf($template, $type, $label, $params);
     }
 
     /**
