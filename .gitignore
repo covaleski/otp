@@ -1,8 +1,16 @@
+# ----------------
 # Composer
+# ----------------
+
 /vendor/
 
-# PHPUnit
-/.phpunit.cache
+# ----------------
+# Tests
+# ----------------
+
+.phpunit.coverage.*
 .phpunit.result.cache
 /tests/output/*
 !/tests/output/.gitkeep
+/tests/session/*
+!/tests/session/index.html

@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/|version|/phpunit.xsd"
-         displayDetailsOnTestsThatTriggerDeprecations="true"
-         displayDetailsOnTestsThatTriggerErrors="true"
-         displayDetailsOnTestsThatTriggerNotices="true"
-         displayDetailsOnTestsThatTriggerWarnings="true"
-         failOnDeprecation="true"
-         failOnNotice="true"
+         beStrictAboutCoversAnnotation="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         bootstrap="vendor/autoload.php"
+         convertDeprecationsToExceptions="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         failOnEmptyTestSuite="true"
+         failOnIncomplete="true"
          failOnRisky="true"
-         failOnWarning="true">
+         failOnSkipped="true"
+         failOnWarning="true"
+         forceCoversAnnotation="true"
+         testdox="true"
+         verbose="true">
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <report>
+            <text outputFile=".phpunit.coverage.text"/>
+        </report>
+    </coverage>
     <testsuites>
         <testsuite name="tests">
             <directory>tests</directory>
