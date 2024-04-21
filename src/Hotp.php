@@ -32,19 +32,26 @@ abstract class Hotp
      * Create the HOPT instance.
      */
     public function __construct(
-        /** Number of digits the password must contain. */
+        /**
+         * Number of digits the password must contain.
+         */
         protected int $digits,
-        /** Authentication issuer. */
+
+        /**
+         * Authentication issuer.
+         */
         protected string $issuer,
-        /** Authentication label. */
+
+        /**
+         * Authentication label.
+         */
         protected string $label,
-        /** Secret to combine with the counter and generate passwords. */
+
         string $secret,
-    )
-    {
+    ) {
         // Check the secret length and store it.
-        if (strlen($secret) !== 20) {
-            $msg = 'Secret must be 20-byte long.';
+        if (strlen($secret) < 1) {
+            $msg = 'The secret cannot be empty.';
             throw new \InvalidArgumentException($msg);
         }
         $this->secret = $secret;
@@ -114,8 +121,10 @@ abstract class Hotp
 
         // Ensure it's 160-bit long.
         if (strlen($value) !== 20) {
+            // @codeCoverageIgnoreStart
             $msg = 'Failed to obtain a 20-byte long HMAC-SHA-1 value.';
             throw new \Exception($msg);
+            // @codeCoverageIgnoreEnd
         }
         return $value;
     }
