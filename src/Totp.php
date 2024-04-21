@@ -9,7 +9,7 @@ use Covaleski\DataEncoding\Base32;
  *
  * Implementation of RFC 6238.
  *
- * @see https://datatracker.ietf.org/doc/html/rfc6238
+ * @see https://www.rfc-editor.org/rfc/rfc6238.txt
  */
 class Totp extends Hotp
 {

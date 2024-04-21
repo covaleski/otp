@@ -7,7 +7,7 @@ namespace Covaleski\Otp;
  *
  * Implementation of RFC 4226.
  *
- * @see https://datatracker.ietf.org/doc/html/rfc4226
+ * @see https://www.rfc-editor.org/rfc/rfc4226.txt
  */
 abstract class Hotp
 {
