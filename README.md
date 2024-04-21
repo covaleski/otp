@@ -4,7 +4,7 @@
 
 PHP implementation of [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) and [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238). Generates one-time passwords.
 
-Provides a ready-to-use TOTP generator class for integration with authenticator apps such as Google Authenticator. A second class is also provided for HOTP implementations with custom counters.
+Provides a ready-to-use TOTP class for easy integration with authenticator apps along with an extensible HOTP class for custom one-time password implementations.
 
 ## 1 Installation
 
@@ -14,118 +14,160 @@ composer require covaleski/otp
 
 ## 2 Usage
 
-All extensions of the `Hotp` class have a `getPassword()` method, which provides the current password based on the generated counter, and a `getUri()` method, which returns a integration URI for authenticator apps.
+### 2.1 TOTP
 
-### 2.1 Note on QR codes
+The `Totp` class can be used to fastly integrate your application with authenticator apps, either by validating codes or generating URIs that can be outputted as QR codes to register new accounts.
 
-The content of authenticator QR codes is just the OTP URI. You can emit those by passing the value of `getPassword()` to a QR code generator of your choice.
-
-I'd recommend finding a JavaScript library and letting the browser create it so you spare your server and make your application back-end faster. If you wish to do this job server-side, take a look at [3 Testing](#3-testing).
-
-**DO NOT** use external libraries such as Google Charts to generate your QR code! Your URI contains your user's OTP secret and it's a big security gap to send it as a GET variable or rellying in third-party websites to handle it.
-
-### 2.2 TOTP and authenticator apps
-
-The `Totp` class provides an instant way to integrate and verify passwords with authenticator apps.
-
-#### 2.2.1 Instanciating
-
-You must provide the following parameters when instanciating the `Totp` class:
-
-- `int $digits`: how many digits the password must have (usually 6 to 8);
-- `string $issuer`: name of who's emitting the secret (your company, app, etc.);
-- `string $label`: text which will be shown in the authenticator app;
-- `string $secret`: a 20-byte unique token for the user.
-
-It is possible to use the `setOffset()` method to change the TOTP time offset (defaults to 0) and `setStep()` to change the seconds each step has (defaults to 30 seconds).
-
-Note that some implementations may ignore one or more parameters in favor of specific configuration. For example, Google Authenticator ignores offsets and always uses 30 seconds as the time step.
+#### 2.1.1 Example 1: creating URIs
 
 ```php
-$totp = new Totp(
-    6,
-    'Foobar Co.',
-    'Foobar Co.: jonh.doe@foobar.co.uk',
-    '____20ByteSecret____',
-);
+use Covaleski\Otp\Totp;
 
-// (optional) Set a custom offset or time step.
-$totp
-    ->setOffset(300)
-    ->setStep(45);
+// Define some settings.
+$digits = 6;
+$issuer = 'Foobar Inc.';
+$label = 'Foobar: john@foobar.com';
+
+// Create a secret.
+$secret = '1234';
+
+// Instantiate the TOTP class.
+$totp = new Totp($digits, $issuer, $label, $secret);
+
+// Output the URI.
+echo $totp->getUri();
 ```
 
-#### 2.2.2 Verifying a password
+OTP URI contents are usually outputted as QR codes.
 
-Any sent password can be easily checked using `getPassword()`.
+#### 2.1.2 Example 2: generating codes
 
 ```php
-// Get the n-digits code sent by the user.
-// Example: 032942.
-$auth_code = (string) $_POST['auth_code'];
+use Covaleski\Otp\Totp;
 
-// Check the code.
-if ($auth_code !== $totp->getPassword()) {
-    // Unauthorized...
+// Instantiate the TOPT class like the first example.
+$totp = new Totp($digits, $issuer, $label, $secret);
+
+// Get the current password.
+echo 'Your current code is ' . $totp->getPassword();
+```
+
+#### 2.1.3 Example 3: validating codes
+
+```php
+use Covaleski\Otp\Totp;
+
+// Instantiate the TOPT class like the first example.
+$totp = new Totp($digits, $issuer, $label, $secret);
+
+// Get the code sent by the user.
+$password = $_POST['code'];
+
+// Compare codes.
+if ($password === $totp->getPassword()) {
+    echo 'Authenticated successfully!';
+} else {
+    echo 'Invalid code.';
 }
 ```
 
-#### 2.2.3 Getting the URI.
+#### 2.1.4 Example 4: customizing
 
-Use `getUri()` to get the OTP URI - it is used to generate the QR codes.
+The example below creates a TOTP object that:
+
+- Outputs 8-digit codes;
+- Change the code every 15 seconds;
+- Calculates the code with a time offset of 1 hour.
 
 ```php
-// Get the URI.
-$uri = $totp->getUri();
+use Covaleski\Otp\Totp;
+
+// Define settings.
+$digits = 8;
+$issuer = 'My Store Co.';
+$label = 'My Store: michael@foomail.net';
+$secret = 'SomeRandomGeneratedSecret1234';
+
+// Instantiate and configure.
+$totp = new Totp($digits, $issuer, $label, $secret);
+$totp
+    ->setStep(15)
+    ->setOffset(3600);
 ```
 
-### 2.3 HOTP and custom counters
+Note that some implementations may ignore one or more URI parameters, and might even reject URIs that contain unsupported options.
 
-If you have a specific counter system you wish to implement between your application and authenticator apps, just extend the `Hotp` class and provide two methods:
+For wider compatibility, you might want to use 6-digit codes with 30 seconds steps (default).
 
-- `protected getCounter(): string`:
-  - Must return the current counter;
-  - Counters may be controlled by time, synchronized increments and other methods;
-- `public getUri(): string`:
-  - Must return a URI containing the integration data;
-  - URI parameters may vary according to each implementation;
-  - The `Hotp` class provide a `createUri()` method to easily create URIs suitable for most authenticator apps;
-  - [Google Authenticator](https://github.com/google/google-authenticator/wiki/Key-Uri-Format) format: `otpauth://TYPE/LABEL?PARAMETERS`;
-  - TOTP example: `otpauth://totp/Some%20Label?secret=BASE32ENCODEDSECRET&issuer=Some%20Issuer`.
+### 2.2 Custom HOTP implementation
 
-The `Hotp` class will do the rest:
+You can extend the `Covaleski\Otp\Hotp` to create your own one-time password implementation.
+
+Extensions must provide two methods: `getCounter()` and `getUri()`. The first one must output the current counter as a binary string (e.g. a time counter), and the second is responsible for providing the integration URI.
+
+Counters may depend on time, synchronized increments or other approaches (it's up to you), while URIs are necessary so you can generate QR codes for authenticator apps.
+
+If you opt to set your OTP accounts manually in those apps (without QR codes), you must always insert your secrets as base32 encoded strings.
+
+Furthermore, the `Hotp` class will do the rest and:
 
 - Generate the HMAC-SHA-1 string;
 - Dinamically truncate the HMAC binary string;
 - Compute the HOTP value and output the required amount of digits.
 
-```php
-class FooOtp extends Hotp
-{
-    public function getUri(): string
-    {
-        return get_foo_counter();
-    }
+See how the methods are implemented in the `Covaleski\Otp\Totp` class:
 
+```php
+class Totp extends Hotp
+{
+    // ...Other class members...
+
+    /**
+     * Get the current time counter.
+     *
+     * Returns the counter as a 16-byte binary string.
+     */
     protected function getCounter(): string
     {
+        // Get and offset the current UNIX timestamp.
+        $time = time() + $this->offset;
+        // Calculate the number of steps.
+        $counter = floor($time / $this->step);
+
+        // Format for HMAC value generation.
+        $counter = dechex($counter);
+        $counter = str_pad($counter, 16, '0', STR_PAD_LEFT);
+
+        return hex2bin($counter);
+    }
+
+    /**
+     * Get the URI for authentication apps.
+     */
+    public function getUri(): string
+    {
+        // Encode the secret as base32.
+        $secret = Base32::encode($this->secret);
+        $secret = str_replace('=', '', $secret);
+
         // Build URI.
-        return $this->createUri('foootp', [
-            'foobar' => 'baz',
+        return $this->createUri('totp', [
+            'secret' => $secret,
             'issuer' => $this->issuer,
-            'label' => $this->label,
-            'secret' => $this->secret,
+            'algorithm' => 'SHA1',
+            'digits' => $this->digits,
+            'period' => $this->step,
         ]);
     }
+
+    // ...Other class members...
 }
 ```
 
 ## 3 Testing
 
-Tests were made with PHPUnit. Use the following command to run all of them.
+Tests were made with PHPUnit. Use the following command to run them.
 
 ```sh
 ./vendor/bin/phpunit
 ```
-
-For integration testing, QR codes are generated and put in `tests/output` using a third-party library. If you wish to use it in production, see [chillerlan/php-qrcode](https://github.com/chillerlan/php-qrcode).
