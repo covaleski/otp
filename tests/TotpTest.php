@@ -7,6 +7,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass \Covaleski\Otp\Totp
+ * @todo ::getSecret
+ * @todo ::validate
  */
 final class TotpTest extends TestCase
 {
