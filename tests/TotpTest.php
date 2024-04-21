@@ -28,11 +28,11 @@ final class TotpTest extends TestCase
                 ],
                 // Expected URI:
                 'otpauth://totp/Foobar%3A%20john%40foobar.com'
-                    . '?secret=MZXW6ZTPN5TG633GN5XWM33PMZXW633P'
-                    . '&issuer=Foobar%20Inc.'
-                    . '&algorithm=SHA1'
-                    . '&digits=6'
-                    . '&period=30',
+                    .'?secret=MZXW6ZTPN5TG633GN5XWM33PMZXW633P'
+                    .'&issuer=Foobar%20Inc.'
+                    .'&algorithm=SHA1'
+                    .'&digits=6'
+                    .'&period=30',
                 // Expected codes:
                 [
                     '1713657790' => '692918', // 2024-04-21 00:03:10 UTC
@@ -55,11 +55,11 @@ final class TotpTest extends TestCase
                 ],
                 // Expected URI:
                 'otpauth://totp/Hello%20World%3A%20mary%40helloworld.com'
-                    . '?secret=KZSXE6K7KZSXE6JDJRXW4Z2AKBQXG43XN5ZGIOJYG43DKNBTGIYTEMZUGU3DOOBZEFLW652TN5JWKY3VOJSQ'
-                    . '&issuer=Hello%20World%20Co.'
-                    . '&algorithm=SHA1'
-                    . '&digits=8'
-                    . '&period=15',
+                    .'?secret=KZSXE6K7KZSXE6JDJRXW4Z2AKBQXG43XN5ZGIOJYG43DKNBTGIYTEMZUGU3DOOBZEFLW652TN5JWKY3VOJSQ'
+                    .'&issuer=Hello%20World%20Co.'
+                    .'&algorithm=SHA1'
+                    .'&digits=8'
+                    .'&period=15',
                 // Expected codes:
                 [
                     '1713663125' => '57880942', // 2024-04-21 01:32:05 UTC
@@ -82,11 +82,11 @@ final class TotpTest extends TestCase
                 ],
                 // Expected URI:
                 'otpauth://totp/So%20Secure%3A%20mitchel%40secure123.net'
-                    . '?secret=HE'
-                    . '&issuer=So%20Secure%20LLC'
-                    . '&algorithm=SHA1'
-                    . '&digits=1'
-                    . '&period=60',
+                    .'?secret=HE'
+                    .'&issuer=So%20Secure%20LLC'
+                    .'&algorithm=SHA1'
+                    .'&digits=1'
+                    .'&period=60',
                 // Expected codes:
                 [
                     '1713661985' => '4', // 2024-04-21 01:13 UTC
@@ -111,6 +111,7 @@ final class TotpTest extends TestCase
      * @covers ::truncate
      * @covers ::setOffset
      * @covers ::setStep
+     *
      * @dataProvider validConfigProvider
      */
     public function testCanGenerateUriAndPasswords(

@@ -4,16 +4,16 @@ namespace Covaleski\Otp;
 
 /**
  * Generates HMAC-based one-time passwords.
- * 
+ *
  * Implementation of RFC 4226.
- * 
+ *
  * @see https://datatracker.ietf.org/doc/html/rfc4226
  */
 abstract class Hotp
 {
     /**
      * Get the integration URI.
-     * 
+     *
      * Necessary to create QR codes.
      */
     abstract public function getUri(): string;
@@ -78,8 +78,7 @@ abstract class Hotp
     protected function createUri(
         string $type,
         array $params,
-    ): string
-    {
+    ): string {
         // Format type and label.
         $type = rawurlencode($type);
         $label = rawurlencode($this->label);
@@ -87,7 +86,7 @@ abstract class Hotp
         // Format params.
         $query = [];
         foreach ($params as $key => $value) {
-            $query[] = $key .'='. rawurlencode($value);
+            $query[] = $key.'='.rawurlencode($value);
         }
         $query = implode('&', $query);
 
@@ -126,6 +125,7 @@ abstract class Hotp
             throw new \Exception($msg);
             // @codeCoverageIgnoreEnd
         }
+
         return $value;
     }
 
@@ -138,13 +138,13 @@ abstract class Hotp
         $bytes = unpack('C20', $hmac_value);
 
         // Use the string's low-order 4 bits as the offset.
-        $offset = $bytes[20] & 0x0f;
+        $offset = $bytes[20] & 0x0F;
 
         // Extract 4 bytes using the dynamic offset.
         $slice = array_slice($bytes, $offset, 4, false);
         // Mask the most significant bit.
-        $slice[0] = $slice[0] & 0x7f;
-        
+        $slice[0] = $slice[0] & 0x7F;
+
         // Pack the extracted bytes as a binary string again.
         $string = pack('C4', ...$slice);
 

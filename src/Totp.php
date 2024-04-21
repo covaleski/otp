@@ -6,9 +6,9 @@ use Covaleski\DataEncoding\Base32;
 
 /**
  * Generates time-based one-time passwords.
- * 
+ *
  * Implementation of RFC 6238.
- * 
+ *
  * @see https://datatracker.ietf.org/doc/html/rfc6238
  */
 class Totp extends Hotp
@@ -25,7 +25,7 @@ class Totp extends Hotp
 
     /**
      * Get the current time counter.
-     * 
+     *
      * Returns the counter as a 16-byte binary string.
      */
     protected function getCounter(): string
@@ -67,6 +67,7 @@ class Totp extends Hotp
     public function setOffset(int $seconds): static
     {
         $this->offset = $seconds;
+
         return $this;
     }
 
@@ -76,6 +77,7 @@ class Totp extends Hotp
     public function setStep(int $step): static
     {
         $this->step = $step;
+
         return $this;
     }
 }
