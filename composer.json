@@ -17,7 +17,7 @@
     "minimum-stability": "stable",
     "require-dev": {
         "phpunit/phpunit": "^9.6",
-        "chillerlan/php-qrcode": "^4.3"
+        "laravel/pint": "^1.15"
     },
     "require": {
         "covaleski/data-encoding": "^1.0"
