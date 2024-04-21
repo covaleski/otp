@@ -26,20 +26,22 @@ class Totp extends Hotp
     /**
      * Get the current time counter.
      *
-     * Returns the counter as a 16-byte binary string.
+     * Returns the counter as a 8-byte binary string.
      */
     protected function getCounter(): string
     {
         // Get and offset the current UNIX timestamp.
         $time = time() + $this->offset;
+
         // Calculate the number of steps.
         $counter = floor($time / $this->step);
 
-        // Format for HMAC value generation.
+        // Format the number as an 8-byte binary string.
         $counter = dechex($counter);
         $counter = str_pad($counter, 16, '0', STR_PAD_LEFT);
+        $counter = hex2bin($counter);
 
-        return hex2bin($counter);
+        return $counter;
     }
 
     /**

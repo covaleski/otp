@@ -7,8 +7,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass \Covaleski\Otp\Totp
- * @todo ::getSecret
+ *
+ * @todo Remove issuer and label from ::__construct
+ * @todo Add issuer and label to ::getUri
  * @todo ::validate
+ * @todo ::validate (static)
  */
 final class TotpTest extends TestCase
 {
