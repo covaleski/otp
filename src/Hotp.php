@@ -69,7 +69,7 @@ abstract class Hotp
         // Step 3 - Compute an HOTP value.
         $digits = $this->computeDigits($string);
 
-        return $digits;
+        return str_pad($digits, $this->digits, '0', STR_PAD_LEFT);
     }
 
     /**

@@ -16,6 +16,7 @@ final class TotpTest extends TestCase
     protected function validConfigProvider(): array
     {
         return [
+            // Test a 20-byte password with classic settings.
             [
                 // Configuration:
                 [
@@ -43,6 +44,7 @@ final class TotpTest extends TestCase
                     '1713657940' => '234109', // 2024-04-21 00:05:40 UTC
                 ],
             ],
+            // Test a longer password with more digits and a shorter step.
             [
                 // Configuration:
                 [
@@ -70,6 +72,8 @@ final class TotpTest extends TestCase
                     '1713663200' => '86410188', // 2024-04-21 01:33:20 UTC
                 ],
             ],
+            // Test a short password with 1 digit, larger steps and an offset.
+            // This would be a very unsecure option.
             [
                 // Configuration:
                 [
@@ -95,6 +99,29 @@ final class TotpTest extends TestCase
                     '1713662165' => '7', // 2024-04-21 01:16 UTC
                     '1713662225' => '6', // 2024-04-21 01:17 UTC
                     '1713662285' => '0', // 2024-04-21 01:18 UTC
+                ],
+            ],
+            // Test password padding.
+            [
+                // Configuration:
+                [
+                    'secret' => '123456789',
+                    'issuer' => 'Test Inc.',
+                    'label' => 'Test: michael@test.com',
+                    'digits' => 6,
+                    'step' => '5',
+                    'offset' => null,
+                ],
+                // Expected URI:
+                'otpauth://totp/Test%3A%20michael%40test.com'
+                    .'?secret=GEZDGNBVGY3TQOI'
+                    .'&issuer=Test%20Inc.'
+                    .'&algorithm=SHA1'
+                    .'&digits=6'
+                    .'&period=5',
+                // Expected codes:
+                [
+                    '1713707647' => '065886', // 2024-04-21 13:54:07 UTC
                 ],
             ],
         ];
