@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-PHP implementation of [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) and [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238). Generates one-time passwords.
+PHP implementation of [RFC 4226](https://www.rfc-editor.org/rfc/rfc4226.txt) and [RFC 6238](https://www.rfc-editor.org/rfc/rfc6238.txt). Generates one-time passwords.
 
 Provides a ready-to-use TOTP class for easy integration with authenticator apps along with an extensible HOTP class for custom one-time password implementations.
 
@@ -16,9 +16,15 @@ composer require covaleski/otp
 
 ### 2.1 TOTP
 
-The `Totp` class can be used to fastly integrate your application with authenticator apps, either by validating codes or generating URIs that can be outputted as QR codes to register new accounts.
+The `Totp` class can be used to:
 
-#### 2.1.1 Example 1: creating URIs
+- Emit codes;
+- Validate received codes;
+- Create URIs for QR code generation.
+
+#### 2.1.1 Creating URIs
+
+Authenticator QR codes are just the OTP URIs encoded as a QR code. Follow the steps below to create the URI.
 
 ```php
 use Covaleski\Otp\Totp;
@@ -31,49 +37,33 @@ $label = 'Foobar: john@foobar.com';
 // Create a secret.
 $secret = '1234';
 
-// Instantiate the TOTP class.
+// Instantiate the TOTP class and get the URI.
 $totp = new Totp($digits, $issuer, $label, $secret);
-
-// Output the URI.
-echo $totp->getUri();
+$uri = $totp->getUri();
 ```
 
-OTP URI contents are usually outputted as QR codes.
+You can output the URI as a QR code using any library of your choice.
 
-#### 2.1.2 Example 2: generating codes
+#### 2.1.2 Generating and validating codes
+
+Use `getPassword()` to get the current code.
 
 ```php
 use Covaleski\Otp\Totp;
 
-// Instantiate the TOPT class like the first example.
-$totp = new Totp($digits, $issuer, $label, $secret);
+// Instantiate the TOPT class.
+$digits = 6;
+$totp = new Totp(6, 'Cool LLC', 'Cool: john@cool.com', $secret);
 
 // Get the current password.
-echo 'Your current code is ' . $totp->getPassword();
+$input = (string) $_POST['code'];
+$is_valid = $totp->getPassword() === $input;
+echo 'Your code is ' . ($is_valid ? 'correct!' : 'incorrect!');
 ```
 
-#### 2.1.3 Example 3: validating codes
+#### 2.1.3 Customizing
 
-```php
-use Covaleski\Otp\Totp;
-
-// Instantiate the TOPT class like the first example.
-$totp = new Totp($digits, $issuer, $label, $secret);
-
-// Get the code sent by the user.
-$password = $_POST['code'];
-
-// Compare codes.
-if ($password === $totp->getPassword()) {
-    echo 'Authenticated successfully!';
-} else {
-    echo 'Invalid code.';
-}
-```
-
-#### 2.1.4 Example 4: customizing
-
-The example below creates a TOTP object that:
+You can change several parameters of your generator. The example below creates a TOTP object that:
 
 - Outputs 8-digit codes;
 - Change the code every 15 seconds;
@@ -82,32 +72,20 @@ The example below creates a TOTP object that:
 ```php
 use Covaleski\Otp\Totp;
 
-// Define settings.
-$digits = 8;
-$issuer = 'My Store Co.';
-$label = 'My Store: michael@foomail.net';
-$secret = 'SomeRandomGeneratedSecret1234';
-
 // Instantiate and configure.
-$totp = new Totp($digits, $issuer, $label, $secret);
+$totp = new Totp(8, $issuer, $label, $secret);
 $totp
     ->setStep(15)
     ->setOffset(3600);
 ```
 
-Note that some implementations may ignore one or more URI parameters, and might even reject URIs that contain unsupported options.
-
-For wider compatibility, you might want to use 6-digit codes with 30 seconds steps (default).
+Note that some implementations may ignore or even reject one or more custom TOTP parameters. The most compatible configuration (usually) is to generate 6-digit codes every 30 seconds with no time offset.
 
 ### 2.2 Custom HOTP implementation
 
 You can extend the `Covaleski\Otp\Hotp` to create your own one-time password implementation.
 
 Extensions must provide two methods: `getCounter()` and `getUri()`. The first one must output the current counter as a binary string (e.g. a time counter), and the second is responsible for providing the integration URI.
-
-Counters may depend on time, synchronized increments or other approaches (it's up to you), while URIs are necessary so you can generate QR codes for authenticator apps.
-
-If you opt to set your OTP accounts manually in those apps (without QR codes), you must always insert your secrets as base32 encoded strings.
 
 Furthermore, the `Hotp` class will do the rest and:
 
@@ -163,6 +141,8 @@ class Totp extends Hotp
     // ...Other class members...
 }
 ```
+
+The `Totp` class depends on time to create its counter and encode its secrets as base32 strings when creating the URI.
 
 ## 3 Testing
 
